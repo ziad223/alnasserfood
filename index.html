@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="scroll-smooth">
 
 <head>
@@ -352,9 +352,21 @@
             width: 100%;
         }
     </style>
+    <script>
+        (function() {
+            const savedLang = localStorage.getItem('appLang') || 'ar';
+            document.documentElement.lang = savedLang;
+            document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr';
+        })();
+    </script>
 </head>
 
 <body class="text-gray-800 antialiased selection:bg-gold selection:text-white overflow-x-hidden">
+    <!-- Loading Overlay -->
+    <div id="pageLoader" class="fixed inset-0 bg-dark-900/70 backdrop-blur-md z-[9999] flex flex-col items-center justify-center transition-opacity duration-300">
+        <div class="w-16 h-16 border-4 border-gold/30 border-t-gold rounded-full animate-spin mb-4"></div>
+        <div class="text-gold font-bold tracking-widest animate-pulse" id="loaderText">جاري التحميل...</div>
+    </div>
 
     <!-- Navbar -->
     <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
@@ -2093,9 +2105,18 @@
             }
         };
 
-        let currentLang = 'ar';
+        let currentLang = localStorage.getItem('appLang') || 'ar';
         const langToggleBtn = document.getElementById('langToggle');
         const mobileLangToggleBtn = document.getElementById('mobileLangToggle');
+
+        // Hide loader quickly after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.classList.add('hidden'), 300);
+            }
+        });
 
         function applyTranslations(lang) {
             document.documentElement.lang = lang;
@@ -2129,21 +2150,41 @@
             });
         }
 
-        function handleLangToggle() {
-            if (currentLang === 'ar') {
-                currentLang = 'en';
+        // Update toggle buttons text based on current lang
+        function updateToggleButtons(lang) {
+            if (lang === 'en') {
                 langToggleBtn.innerHTML = '<i class="fas fa-globe"></i> <span>AR</span>';
                 mobileLangToggleBtn.innerHTML = '<i class="fas fa-globe"></i> <span>العربية</span>';
             } else {
-                currentLang = 'ar';
                 langToggleBtn.innerHTML = '<i class="fas fa-globe"></i> <span>EN</span>';
                 mobileLangToggleBtn.innerHTML = '<i class="fas fa-globe"></i> <span>English</span>';
             }
-            applyTranslations(currentLang);
+        }
+
+        function handleLangToggle() {
+            const loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.classList.remove('hidden');
+                // Trigger reflow
+                void loader.offsetWidth;
+                loader.style.opacity = '1';
+            }
+            
+            const newLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('appLang', newLang);
+            
+            // Reload page immediately
+            setTimeout(() => {
+                window.location.reload();
+            }, 50);
         }
 
         langToggleBtn.addEventListener('click', handleLangToggle);
         mobileLangToggleBtn.addEventListener('click', handleLangToggle);
+
+        // Initial setup
+        updateToggleButtons(currentLang);
+        applyTranslations(currentLang);
 
     </script>
 </body>
