@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl" class="scroll-smooth">
 
 <head>
@@ -345,10 +345,16 @@
             height: 100%;
             border: none;
         }
+
+        /* Prevent horizontal scroll on mobile */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
     </style>
 </head>
 
-<body class="text-gray-800 antialiased selection:bg-gold selection:text-white">
+<body class="text-gray-800 antialiased selection:bg-gold selection:text-white overflow-x-hidden">
 
     <!-- Navbar -->
     <header class="fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
