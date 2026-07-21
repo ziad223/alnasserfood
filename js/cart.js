@@ -112,6 +112,10 @@ class ShoppingCart {
 
 // Initialize globally
 window.cart = new ShoppingCart();
+window.toggleCart = function() {
+    window.location.href = 'cart.html';
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     window.cart.updateCartUI();
 });
